@@ -6,7 +6,7 @@ today = datetime.today().strftime("%Y-%m-%d")
 def make_prediction(data, model):
     best_rf = model
     # Carregar os dados históricos
-    matches_rolling = pd.read_csv("/home/dayvison2k/matches.csv", index_col=0)
+    matches_rolling = pd.read_csv("/home/dayvison2k/matches.csv")
     new_match_data = pd.DataFrame(data,index=[0])
     new_match_data.columns = [c.lower() for c in new_match_data.columns]
     team = new_match_data["team"].iloc[0]
