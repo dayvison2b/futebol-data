@@ -1,3 +1,15 @@
 venv
 settings
-__pycache__/database.cpython-312.pyc
+__pycache__/
+bot.py
+cleaner.py
+# Ignorar arquivos que contenham "teste" no nome
+*test*
+# Ignorar todos os arquivos .csv
+*.csv
+
+*.json
+
+*.joblib
+scraper2.ipynb
+scraping_bkp.ipynb

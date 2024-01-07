@@ -35,3 +35,27 @@ def create_documents(collection_name, documents_data):
 
     # Return the list of document IDs
     return document_ids
+
+def select_documents(collection_name):
+    collection_ref = db.collection(collection_name)
+    
+    docs = collection_ref.stream()
+    
+    documents_list = [doc.to_dict() for doc in docs]
+    return documents_list
+
+def select_documents_by_where(collection_name, *conditions):
+    collection_ref = db.collection(collection_name)
+
+    # Create a query with the initial condition
+    query = collection_ref.where(*conditions[0])
+
+    # Add additional conditions to the query
+    for condition in conditions[1:]:
+        query = query.where(*condition)
+
+    # Execute the query and retrieve documents
+    docs = query.stream()
+
+    documents_list = [doc.to_dict() for doc in docs]
+    return documents_list

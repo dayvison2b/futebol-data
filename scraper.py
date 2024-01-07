@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 # CONSTANTS
 DELAY = 3
-SEASON_RANGE = list(range(2023, 2021, -1))
+SEASON_RANGE = list(range(2023, 2020, -1))
 COMP = "Premier-League" # IMPORTANTE (A URL ABAIXO ESTÁ DINAMICAMENTE PEGANDO ESSA CONSTANTE)
 URL = f"https://fbref.com/en/comps/9/{COMP}-Stats" # URL constante (usada como base) da premier league, alterar para o Brasileirão, se necessário
 
@@ -114,7 +114,7 @@ for year in SEASON_RANGE:
 
 pd.set_option('display.max_columns', None)
 
-dict_players_performance = [df.to_aaadict(orient="records") for df in players_performance]
+dict_players_performance = [df.to_dict(orient="records") for df in players_performance]
 dict_players_table = [df.to_dict(orient="records") for df in players_table]
 dict_matches_table = [df.to_dict(orient="records") for df in matches_table]
 

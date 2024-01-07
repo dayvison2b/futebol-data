@@ -3,3 +3,5 @@ requests
 pandas
 lxml
 html5lib
+scikit-learn
+matplotlib
