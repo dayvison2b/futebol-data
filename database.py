@@ -59,3 +59,24 @@ def select_documents_by_where(collection_name, *conditions):
 
     documents_list = [doc.to_dict() for doc in docs]
     return documents_list
+
+def delete_collection(collection_path, batch_size=20, limit=5000):
+    collection_ref = db.collection(collection_path)
+
+    # Get a list of documents in the collection
+    docs = collection_ref.limit(limit).stream()
+
+    # Delete documents in batches
+    deleted_count = 0
+    for doc in docs:
+        doc.reference.delete()
+        deleted_count += 1
+
+        if deleted_count % batch_size == 0:
+            print(f"Deleted {deleted_count} documents")
+
+        if deleted_count >= limit:
+            break
+
+    print(f"Deleted a total of {deleted_count} documents from {collection_path}")
+    
