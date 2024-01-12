@@ -1,80 +1,117 @@
 import pandas as pd
+import database
 from datetime import datetime
+import requests
+import json
+import time
 
-today = datetime.today().strftime("%Y-%m-%d")
 
-def make_prediction(data, model):
-    best_rf = model
-    # Carregar os dados históricos
-    matches_rolling = pd.read_csv("/home/dayvison2k/matches.csv")
-    new_match_data = pd.DataFrame(data,index=[0])
-    new_match_data.columns = [c.lower() for c in new_match_data.columns]
-    team = new_match_data["team"].iloc[0]
+base_url = "https://v3.football.api-sports.io/"
 
-    most_common_formation = matches_rolling.loc[matches_rolling["team"] == team, "formation"].mode().iloc[0]
-    most_common_comp = matches_rolling.loc[matches_rolling["team"] == team, "comp"].mode().iloc[0]
-    # Preencher 'formation' com o valor mais frequente
-    new_match_data["formation"] = most_common_formation
-    new_match_data["date"] = today
-    new_match_data["venue"] = "Home"
-    new_match_data["comp"] = most_common_comp
+with open('settings/api_key.txt', 'r') as api_key_file:
+    api_key = api_key_file.read()
 
-    # Concatenar novas partidas com o conjunto de dados histórico
-    combined_data = pd.concat([matches_rolling, new_match_data], ignore_index=True)
-    combined_data = treatment(combined_data)
+headers = {
+    'x-rapidapi-key': api_key,
+    'x-rapidapi-host': 'v3.football.api-sports.io'
+}
 
-    cols = ["gf", "ga", "sh", "sot", "dist", "fk", "pk", "pkatt", "poss","g/sot","g/sh"]
-    new_cols = [f"{c}_rolling" for c in cols]
-    selected_features = ["venue_code", "opp_code", "day_code", "formation_code","comp_code"] + new_cols
+def make_request(base_url, endpoint, parameters, headers):
+    response = requests.get(f'{base_url}{endpoint}{parameters}', headers=headers)
+    return response.json().get('response', {})
 
-    # Recalcular as médias móveis para o conjunto combinado
-    combined_data = combined_data.groupby("team").apply(lambda x: rolling_averages(x, cols, new_cols))
-    combined_data = combined_data.reset_index(drop=True)
+def get_fixtures(date_init, to):
+    # Assuming you want to filter fixtures based on the date range
+    fixtures = database.select_documents_by_where(
+        collection_name='fixtures',
+        conditions=[
+            ("fixture.date", ">=", date_init),
+            ("fixture.date", "<=", to)
+        ]
+    )
+    return fixtures
 
-    # Selecionar as features relevantes para as novas partidas
-    new_match_date_value = new_match_data["date"].iloc[0]
-    new_match_features = combined_data[pd.to_datetime(combined_data['date']) >= pd.to_datetime(new_match_date_value)][selected_features]
+def extract_info(fixtures_predictions):
+    final_fixture_predictions = []
+    for fixture_prediction in fixtures_predictions:
+        predictions_info = fixture_prediction[0]['predictions']
+        league_info = fixture_prediction[0]['league']
+        teams_info = fixture_prediction[0]['teams']
+        comparison_info = fixture_prediction[0]['comparison']
 
-    # Fazer a predição usando o modelo treinado
-    prediction = best_rf.predict(new_match_features)
-    probability = best_rf.predict_proba(new_match_features)[:, 1]  # Probabilidade de vitória
+        # Create a new data structure with only essential details
+        final_fixture_predictions.append({
+            'predictions': {
+                'winner': predictions_info['winner'],
+                'win_or_draw': predictions_info['win_or_draw'],
+                'under_over': predictions_info['under_over'],
+                'goals': predictions_info['goals'],
+                'advice': predictions_info['advice'],
+                'percent': predictions_info['percent']
+            },
+            'league': {
+                'id': league_info['id'],
+                'name': league_info['name'],
+                'country': league_info['country'],
+                'logo': league_info['logo'],
+                'flag': league_info['flag'],
+                'season': league_info['season']
+            },
+            'teams': {
+                'home': {
+                    'id': teams_info['home']['id'],
+                    'name': teams_info['home']['name'],
+                    'logo': teams_info['home']['logo']
+                },
+                'away': {
+                    'id': teams_info['away']['id'],
+                    'name': teams_info['away']['name'],
+                    'logo': teams_info['away']['logo']
+                }
+            },
+            'comparison': {
+                'form': comparison_info['form'],
+                'att': comparison_info['att'],
+                'def': comparison_info['def'],
+                'poisson_distribution': comparison_info['poisson_distribution'],
+                'h2h': comparison_info['h2h'],
+                'goals': comparison_info['goals'],
+                'total': comparison_info['total']
+            }
+        })
+    return final_fixture_predictions
+    
+today = datetime.today()
+date_init = today.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+to = (today + pd.DateOffset(days=25)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+fixtures = get_fixtures(date_init, to)
 
-    # Criar um dicionário com os resultados
-    prediction_result = {
-        "team": str(new_match_data["team"].iloc[0]),
-        "opponent": str(new_match_data["opponent"].iloc[0]),
-        "venue": str(new_match_data['venue'].iloc[0]),
-        "comp": str(new_match_data["comp"].iloc[0]),
-        "formation": str(new_match_data["formation"].iloc[0]),
-        "prediction": str(prediction[0]),
-        "probability": str(probability[0])
-    }
+# Sort fixtures based on the 'date' field
+fixtures_sorted = sorted(fixtures, key=lambda x: datetime.fromisoformat(x['fixture']['date']))
 
-    return prediction_result
+# Select the next 25 fixtures
+next_25_fixtures = fixtures_sorted[:10]
+fixtures_predictions = []
+# Example: Print the dates of the next 25 fixtures
+for fixture in next_25_fixtures:
+    #print(fixture['fixture']['date'])
+    fixtures_predictions.append(make_request(base_url, 'predictions', f'?fixture={fixture['fixture']['id']}', headers))
+    time.sleep(1)
 
-def rolling_averages(group, cols, new_cols):
-    group = group.sort_values("date")
-    rolling_stats = group[cols].rolling(3, closed='left').mean()
-    group[new_cols] = rolling_stats
-    group = group.dropna(subset=new_cols)
-    return group
+fixtures_predictions = extract_info(fixtures_predictions)
 
-def treatment(dataframe):
-    dataframe_bkp = dataframe.tail(1).copy()  # Create a copy of the last row
-    dataframe = dataframe[~dataframe.isin(dataframe_bkp)]
-    dataframe.drop(columns=['notes', 'attendance', 'captain'], axis=1, inplace=True)
-    dataframe_bkp.drop(columns=['notes', 'attendance', 'captain'], axis=1, inplace=True)
-    dataframe = dataframe[~dataframe['result'].isna()]
-    dataframe = dataframe.dropna()
-    dataframe = pd.concat([dataframe, dataframe_bkp], ignore_index=True)
-    dataframe["date"] = pd.to_datetime(dataframe["date"])
-    dataframe['formation'] = dataframe['formation'].str.replace('◆', '')
-    dataframe['gf'] = dataframe['gf'].apply(lambda x: int(str(x).split('(')[0].strip()) if '(' in str(x) else x)
-    dataframe['ga'] = dataframe['ga'].apply(lambda x: int(str(x).split('(')[0].strip()) if '(' in str(x) else x)
-    dataframe["venue_code"] = dataframe["venue"].astype("category").cat.codes
-    dataframe["opp_code"] = dataframe["opponent"].astype("category").cat.codes
-    dataframe["formation_code"] = dataframe["formation"].astype("category").cat.codes
-    dataframe['comp_code'] = dataframe["comp"].astype("category").cat.codes
-    # dataframe["hour"] = dataframe["time"].str.replace(":.+", "", regex=True).astype("int")
-    dataframe["day_code"] = dataframe["date"].dt.dayofweek
-    return dataframe
+today = today.strftime('%Y_%m_%d')
+
+# Exporting the predictions
+json_data = json.dumps(fixtures_predictions, indent=2, ensure_ascii=False)
+json_file_path_predictions = f'fixtures_predictions_{today}.json'
+with open(json_file_path_predictions, 'w') as json_file:
+    json_file.write(json_data)
+print(f"Predictions exported - {json_file_path_predictions}")
+
+# Exporting the fixtures
+json_data_fixtures = json.dumps(next_25_fixtures, indent=2, ensure_ascii=False)
+json_file_path_fixtures = f'fixtures_{today}.json'
+with open(json_file_path_fixtures, 'w') as json_file:
+    json_file.write(json_data_fixtures)
+print(f"Fixtures exported - {json_file_path_fixtures}")

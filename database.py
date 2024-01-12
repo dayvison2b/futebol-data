@@ -44,7 +44,7 @@ def select_documents(collection_name):
     documents_list = [doc.to_dict() for doc in docs]
     return documents_list
 
-def select_documents_by_where(collection_name, *conditions):
+def select_documents_by_where(collection_name, conditions):
     collection_ref = db.collection(collection_name)
 
     # Create a query with the initial condition
