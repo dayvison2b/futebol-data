@@ -1,0 +1,682 @@
+[
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/206.png",
+        "id": 206,
+        "name": "Heracles"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/417.png",
+        "id": 417,
+        "name": "Waalwijk"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-12T16:00:00-03:00",
+      "id": 1055214,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 1144,
+        "city": "Waalwijk",
+        "name": "Mandemakers Stadion"
+      },
+      "referee": "R. Dieperink",
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705086000
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/nl.svg",
+      "season": 2023,
+      "id": 88,
+      "round": "Regular Season - 17",
+      "country": "Netherlands",
+      "logo": "https://media.api-sports.io/football/leagues/88.png",
+      "name": "Eredivisie"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/167.png",
+        "id": 167,
+        "name": "1899 Hoffenheim"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/157.png",
+        "id": 157,
+        "name": "Bayern Munich"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-12T16:30:00-03:00",
+      "id": 1049025,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 700,
+        "city": "M\u00fcnchen",
+        "name": "Allianz Arena"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705087800
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/de.svg",
+      "season": 2023,
+      "id": 78,
+      "round": "Regular Season - 17",
+      "country": "Germany",
+      "logo": "https://media.api-sports.io/football/leagues/78.png",
+      "name": "Bundesliga"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/1359.png",
+        "id": 1359,
+        "name": "Luton"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/44.png",
+        "id": 44,
+        "name": "Burnley"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-12T16:45:00-03:00",
+      "id": 1035378,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 512,
+        "city": "Burnley",
+        "name": "Turf Moor"
+      },
+      "referee": "T. Harrington",
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705088700
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/gb.svg",
+      "season": 2023,
+      "id": 39,
+      "round": "Regular Season - 21",
+      "country": "England",
+      "logo": "https://media.api-sports.io/football/leagues/39.png",
+      "name": "Premier League"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/542.png",
+        "id": 542,
+        "name": "Alaves"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/536.png",
+        "id": 536,
+        "name": "Sevilla"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-12T17:00:00-03:00",
+      "id": 1038151,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 1494,
+        "city": "Sevilla",
+        "name": "Estadio Ram\u00f3n S\u00e1nchez Pizju\u00e1n"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705089600
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/es.svg",
+      "season": 2023,
+      "id": 140,
+      "round": "Regular Season - 20",
+      "country": "Spain",
+      "logo": "https://media.api-sports.io/football/leagues/140.png",
+      "name": "La Liga"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/1004.png",
+        "id": 1004,
+        "name": "Kasimpasa"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/1010.png",
+        "id": 1010,
+        "name": "Ankaragucu"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-13T07:30:00-03:00",
+      "id": 1074792,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 2378,
+        "city": "Ankara",
+        "name": "Eryaman Stadyumu"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705141800
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/tr.svg",
+      "season": 2023,
+      "id": 203,
+      "round": "Regular Season - 20",
+      "country": "Turkey",
+      "logo": "https://media.api-sports.io/football/leagues/203.png",
+      "name": "S\u00fcper Lig"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/3601.png",
+        "id": 3601,
+        "name": "Pendikspor"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/3575.png",
+        "id": 3575,
+        "name": "Hatayspor"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-13T07:30:00-03:00",
+      "id": 1074791,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 8392,
+        "city": "Mersin",
+        "name": "Mersin Stadyumu"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705141800
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/tr.svg",
+      "season": 2023,
+      "id": 203,
+      "round": "Regular Season - 20",
+      "country": "Turkey",
+      "logo": "https://media.api-sports.io/football/leagues/203.png",
+      "name": "S\u00fcper Lig"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/36.png",
+        "id": 36,
+        "name": "Fulham"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/49.png",
+        "id": 49,
+        "name": "Chelsea"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-13T09:30:00-03:00",
+      "id": 1035379,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 519,
+        "city": "London",
+        "name": "Stamford Bridge"
+      },
+      "referee": "A. Taylor",
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705149000
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/gb.svg",
+      "season": 2023,
+      "id": 39,
+      "round": "Regular Season - 21",
+      "country": "England",
+      "logo": "https://media.api-sports.io/football/leagues/39.png",
+      "name": "Premier League"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/533.png",
+        "id": 533,
+        "name": "Villarreal"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/534.png",
+        "id": 534,
+        "name": "Las Palmas"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-13T10:00:00-03:00",
+      "id": 1038149,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 1481,
+        "city": "Las Palmas de Gran Canaria",
+        "name": "Estadio de Gran Canaria"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705150800
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/es.svg",
+      "season": 2023,
+      "id": 140,
+      "round": "Regular Season - 20",
+      "country": "Spain",
+      "logo": "https://media.api-sports.io/football/leagues/140.png",
+      "name": "La Liga"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/996.png",
+        "id": 996,
+        "name": "Alanyaspor"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/564.png",
+        "id": 564,
+        "name": "Istanbul Basaksehir"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-13T10:00:00-03:00",
+      "id": 1074793,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 1584,
+        "city": "\u0130stanbul",
+        "name": "Ba\u015fak\u015fehir Fatih Terim Stadyumu"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705150800
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/tr.svg",
+      "season": 2023,
+      "id": 203,
+      "round": "Regular Season - 20",
+      "country": "Turkey",
+      "logo": "https://media.api-sports.io/football/leagues/203.png",
+      "name": "S\u00fcper Lig"
+    }
+  },
+  {
+    "score": {
+      "extratime": {
+        "away": null,
+        "home": null
+      },
+      "fulltime": {
+        "away": null,
+        "home": null
+      },
+      "halftime": {
+        "away": null,
+        "home": null
+      },
+      "penalty": {
+        "away": null,
+        "home": null
+      }
+    },
+    "goals": {
+      "away": null,
+      "home": null
+    },
+    "teams": {
+      "away": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/514.png",
+        "id": 514,
+        "name": "Salernitana"
+      },
+      "home": {
+        "winner": null,
+        "logo": "https://media.api-sports.io/football/teams/492.png",
+        "id": 492,
+        "name": "Napoli"
+      }
+    },
+    "fixture": {
+      "date": "2024-01-13T11:00:00-03:00",
+      "id": 1052452,
+      "timezone": "America/Sao_Paulo",
+      "status": {
+        "long": "Not Started",
+        "short": "NS",
+        "elapsed": null
+      },
+      "venue": {
+        "id": 11904,
+        "city": "Napoli",
+        "name": "Stadio Diego Armando Maradona"
+      },
+      "referee": null,
+      "periods": {
+        "first": null,
+        "second": null
+      },
+      "timestamp": 1705154400
+    },
+    "league": {
+      "flag": "https://media.api-sports.io/flags/it.svg",
+      "season": 2023,
+      "id": 135,
+      "round": "Regular Season - 20",
+      "country": "Italy",
+      "logo": "https://media.api-sports.io/football/leagues/135.png",
+      "name": "Serie A"
+    }
+  }
+]

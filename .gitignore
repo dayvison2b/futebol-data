@@ -8,8 +8,6 @@ cleaner.py
 # Ignorar todos os arquivos .csv
 *.csv
 
-*.json
-
 *.joblib
-scraper2.ipynb
-scraping_bkp.ipynb
+*model.py*
+model.py

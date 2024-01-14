@@ -1,0 +1,712 @@
+[
+  {
+    "predictions": {
+      "winner": {
+        "id": 417,
+        "name": "Waalwijk",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : Waalwijk or draw",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 88,
+      "name": "Eredivisie",
+      "country": "Netherlands",
+      "logo": "https://media.api-sports.io/football/leagues/88.png",
+      "flag": "https://media.api-sports.io/flags/nl.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 417,
+        "name": "Waalwijk",
+        "logo": "https://media.api-sports.io/football/teams/417.png"
+      },
+      "away": {
+        "id": 206,
+        "name": "Heracles",
+        "logo": "https://media.api-sports.io/football/teams/206.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "63%",
+        "away": "38%"
+      },
+      "att": {
+        "home": "54%",
+        "away": "46%"
+      },
+      "def": {
+        "home": "58%",
+        "away": "42%"
+      },
+      "poisson_distribution": {
+        "home": "49%",
+        "away": "51%"
+      },
+      "h2h": {
+        "home": "60%",
+        "away": "40%"
+      },
+      "goals": {
+        "home": "58%",
+        "away": "42%"
+      },
+      "total": {
+        "home": "57.0%",
+        "away": "43.2%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 157,
+        "name": "Bayern Munich",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": "+1.5",
+      "goals": {
+        "home": "-3.5",
+        "away": "-2.5"
+      },
+      "advice": "Combo Double chance : Bayern Munich or draw and +1.5 goals",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 78,
+      "name": "Bundesliga",
+      "country": "Germany",
+      "logo": "https://media.api-sports.io/football/leagues/78.png",
+      "flag": "https://media.api-sports.io/flags/de.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 157,
+        "name": "Bayern Munich",
+        "logo": "https://media.api-sports.io/football/teams/157.png"
+      },
+      "away": {
+        "id": 167,
+        "name": "1899 Hoffenheim",
+        "logo": "https://media.api-sports.io/football/teams/167.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "71%",
+        "away": "29%"
+      },
+      "att": {
+        "home": "55%",
+        "away": "45%"
+      },
+      "def": {
+        "home": "56%",
+        "away": "44%"
+      },
+      "poisson_distribution": {
+        "home": "76%",
+        "away": "24%"
+      },
+      "h2h": {
+        "home": "85%",
+        "away": "15%"
+      },
+      "goals": {
+        "home": "80%",
+        "away": "20%"
+      },
+      "total": {
+        "home": "70.5%",
+        "away": "29.5%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 1359,
+        "name": "Luton",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : draw or Luton",
+      "percent": {
+        "home": "10%",
+        "draw": "45%",
+        "away": "45%"
+      }
+    },
+    "league": {
+      "id": 39,
+      "name": "Premier League",
+      "country": "England",
+      "logo": "https://media.api-sports.io/football/leagues/39.png",
+      "flag": "https://media.api-sports.io/flags/gb.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 44,
+        "name": "Burnley",
+        "logo": "https://media.api-sports.io/football/teams/44.png"
+      },
+      "away": {
+        "id": 1359,
+        "name": "Luton",
+        "logo": "https://media.api-sports.io/football/teams/1359.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "40%",
+        "away": "60%"
+      },
+      "att": {
+        "home": "33%",
+        "away": "67%"
+      },
+      "def": {
+        "home": "58%",
+        "away": "42%"
+      },
+      "poisson_distribution": {
+        "home": "40%",
+        "away": "60%"
+      },
+      "h2h": {
+        "home": "88%",
+        "away": "13%"
+      },
+      "goals": {
+        "home": "67%",
+        "away": "33%"
+      },
+      "total": {
+        "home": "54.3%",
+        "away": "45.8%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 536,
+        "name": "Sevilla",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": "-3.5",
+      "goals": {
+        "home": "-1.5",
+        "away": "-1.5"
+      },
+      "advice": "Combo Double chance : Sevilla or draw and -3.5 goals",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 140,
+      "name": "La Liga",
+      "country": "Spain",
+      "logo": "https://media.api-sports.io/football/leagues/140.png",
+      "flag": "https://media.api-sports.io/flags/es.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 536,
+        "name": "Sevilla",
+        "logo": "https://media.api-sports.io/football/teams/536.png"
+      },
+      "away": {
+        "id": 542,
+        "name": "Alaves",
+        "logo": "https://media.api-sports.io/football/teams/542.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "60%",
+        "away": "40%"
+      },
+      "att": {
+        "home": "75%",
+        "away": "25%"
+      },
+      "def": {
+        "home": "46%",
+        "away": "54%"
+      },
+      "poisson_distribution": {
+        "home": "66%",
+        "away": "34%"
+      },
+      "h2h": {
+        "home": "62%",
+        "away": "38%"
+      },
+      "goals": {
+        "home": "54%",
+        "away": "46%"
+      },
+      "total": {
+        "home": "60.5%",
+        "away": "39.5%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 1004,
+        "name": "Kasimpasa",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-1.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : draw or Kasimpasa",
+      "percent": {
+        "home": "10%",
+        "draw": "45%",
+        "away": "45%"
+      }
+    },
+    "league": {
+      "id": 203,
+      "name": "S\u00fcper Lig",
+      "country": "Turkey",
+      "logo": "https://media.api-sports.io/football/leagues/203.png",
+      "flag": "https://media.api-sports.io/flags/tr.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 1010,
+        "name": "Ankaragucu",
+        "logo": "https://media.api-sports.io/football/teams/1010.png"
+      },
+      "away": {
+        "id": 1004,
+        "name": "Kasimpasa",
+        "logo": "https://media.api-sports.io/football/teams/1004.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "44%",
+        "away": "56%"
+      },
+      "att": {
+        "home": "30%",
+        "away": "70%"
+      },
+      "def": {
+        "home": "71%",
+        "away": "29%"
+      },
+      "poisson_distribution": {
+        "home": "44%",
+        "away": "56%"
+      },
+      "h2h": {
+        "home": "38%",
+        "away": "62%"
+      },
+      "goals": {
+        "home": "42%",
+        "away": "58%"
+      },
+      "total": {
+        "home": "44.8%",
+        "away": "55.2%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 3575,
+        "name": "Hatayspor",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : Hatayspor or draw",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 203,
+      "name": "S\u00fcper Lig",
+      "country": "Turkey",
+      "logo": "https://media.api-sports.io/football/leagues/203.png",
+      "flag": "https://media.api-sports.io/flags/tr.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 3575,
+        "name": "Hatayspor",
+        "logo": "https://media.api-sports.io/football/teams/3575.png"
+      },
+      "away": {
+        "id": 3601,
+        "name": "Pendikspor",
+        "logo": "https://media.api-sports.io/football/teams/3601.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "50%",
+        "away": "50%"
+      },
+      "att": {
+        "home": "20%",
+        "away": "80%"
+      },
+      "def": {
+        "home": "69%",
+        "away": "31%"
+      },
+      "poisson_distribution": {
+        "home": "62%",
+        "away": "38%"
+      },
+      "h2h": {
+        "home": "62%",
+        "away": "38%"
+      },
+      "goals": {
+        "home": "63%",
+        "away": "37%"
+      },
+      "total": {
+        "home": "54.3%",
+        "away": "45.7%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 49,
+        "name": "Chelsea",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : Chelsea or draw",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 39,
+      "name": "Premier League",
+      "country": "England",
+      "logo": "https://media.api-sports.io/football/leagues/39.png",
+      "flag": "https://media.api-sports.io/flags/gb.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 49,
+        "name": "Chelsea",
+        "logo": "https://media.api-sports.io/football/teams/49.png"
+      },
+      "away": {
+        "id": 36,
+        "name": "Fulham",
+        "logo": "https://media.api-sports.io/football/teams/36.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "60%",
+        "away": "40%"
+      },
+      "att": {
+        "home": "53%",
+        "away": "47%"
+      },
+      "def": {
+        "home": "56%",
+        "away": "44%"
+      },
+      "poisson_distribution": {
+        "home": "71%",
+        "away": "29%"
+      },
+      "h2h": {
+        "home": "71%",
+        "away": "29%"
+      },
+      "goals": {
+        "home": "78%",
+        "away": "22%"
+      },
+      "total": {
+        "home": "64.8%",
+        "away": "35.2%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 534,
+        "name": "Las Palmas",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-1.5"
+      },
+      "advice": "Double chance : Las Palmas or draw",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 140,
+      "name": "La Liga",
+      "country": "Spain",
+      "logo": "https://media.api-sports.io/football/leagues/140.png",
+      "flag": "https://media.api-sports.io/flags/es.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 534,
+        "name": "Las Palmas",
+        "logo": "https://media.api-sports.io/football/teams/534.png"
+      },
+      "away": {
+        "id": 533,
+        "name": "Villarreal",
+        "logo": "https://media.api-sports.io/football/teams/533.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "64%",
+        "away": "36%"
+      },
+      "att": {
+        "home": "45%",
+        "away": "55%"
+      },
+      "def": {
+        "home": "76%",
+        "away": "24%"
+      },
+      "poisson_distribution": {
+        "home": "66%",
+        "away": "34%"
+      },
+      "h2h": {
+        "home": "40%",
+        "away": "60%"
+      },
+      "goals": {
+        "home": "31%",
+        "away": "69%"
+      },
+      "total": {
+        "home": "53.7%",
+        "away": "46.3%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 564,
+        "name": "Istanbul Basaksehir",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : Istanbul Basaksehir or draw",
+      "percent": {
+        "home": "35%",
+        "draw": "35%",
+        "away": "30%"
+      }
+    },
+    "league": {
+      "id": 203,
+      "name": "S\u00fcper Lig",
+      "country": "Turkey",
+      "logo": "https://media.api-sports.io/football/leagues/203.png",
+      "flag": "https://media.api-sports.io/flags/tr.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 564,
+        "name": "Istanbul Basaksehir",
+        "logo": "https://media.api-sports.io/football/teams/564.png"
+      },
+      "away": {
+        "id": 996,
+        "name": "Alanyaspor",
+        "logo": "https://media.api-sports.io/football/teams/996.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "50%",
+        "away": "50%"
+      },
+      "att": {
+        "home": "50%",
+        "away": "50%"
+      },
+      "def": {
+        "home": "60%",
+        "away": "40%"
+      },
+      "poisson_distribution": {
+        "home": "73%",
+        "away": "27%"
+      },
+      "h2h": {
+        "home": "29%",
+        "away": "71%"
+      },
+      "goals": {
+        "home": "38%",
+        "away": "63%"
+      },
+      "total": {
+        "home": "50.0%",
+        "away": "50.2%"
+      }
+    }
+  },
+  {
+    "predictions": {
+      "winner": {
+        "id": 492,
+        "name": "Napoli",
+        "comment": "Win or draw"
+      },
+      "win_or_draw": true,
+      "under_over": null,
+      "goals": {
+        "home": "-2.5",
+        "away": "-2.5"
+      },
+      "advice": "Double chance : Napoli or draw",
+      "percent": {
+        "home": "45%",
+        "draw": "45%",
+        "away": "10%"
+      }
+    },
+    "league": {
+      "id": 135,
+      "name": "Serie A",
+      "country": "Italy",
+      "logo": "https://media.api-sports.io/football/leagues/135.png",
+      "flag": "https://media.api-sports.io/flags/it.svg",
+      "season": 2023
+    },
+    "teams": {
+      "home": {
+        "id": 492,
+        "name": "Napoli",
+        "logo": "https://media.api-sports.io/football/teams/492.png"
+      },
+      "away": {
+        "id": 514,
+        "name": "Salernitana",
+        "logo": "https://media.api-sports.io/football/teams/514.png"
+      }
+    },
+    "comparison": {
+      "form": {
+        "home": "50%",
+        "away": "50%"
+      },
+      "att": {
+        "home": "25%",
+        "away": "75%"
+      },
+      "def": {
+        "home": "59%",
+        "away": "41%"
+      },
+      "poisson_distribution": {
+        "home": "68%",
+        "away": "32%"
+      },
+      "h2h": {
+        "home": "93%",
+        "away": "7%"
+      },
+      "goals": {
+        "home": "83%",
+        "away": "17%"
+      },
+      "total": {
+        "home": "63.0%",
+        "away": "37.0%"
+      }
+    }
+  }
+]
