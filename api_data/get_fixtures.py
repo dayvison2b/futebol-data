@@ -1,5 +1,5 @@
 import database
-from api_data.api_data_request import *
+from api_data_request import *
 
 # Capturando as partidas
 important_leagues = [39,78,140,135,88,203,71]

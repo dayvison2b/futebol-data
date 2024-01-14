@@ -1,5 +1,5 @@
 import database
-from api_data.api_data_request import *
+from api_data_request import *
 
 # Capturando os times brasileiros
 teams_data = make_request(base_url, 'teams', '?country=Brazil', headers)

@@ -1,5 +1,5 @@
 import database
-from api_data.api_data_request import *
+from api_data_request import *
 
 def flatten_data(data, league_id):
     flattened_data = []
