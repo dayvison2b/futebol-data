@@ -1,43 +1,42 @@
 import pandas as pd
-import database
-from datetime import datetime
-import requests
+import utils.database as database
+from utils.email_sender import send_email
+from datetime import datetime, timedelta
 import json
 import time
+from api_data.api_data_request import *
 
+FIXTURES_LIMIT = 10
 
-base_url = "https://v3.football.api-sports.io/"
-
-with open('settings/api_key.txt', 'r') as api_key_file:
-    api_key = api_key_file.read()
-
-headers = {
-    'x-rapidapi-key': api_key,
-    'x-rapidapi-host': 'v3.football.api-sports.io'
-}
-
-def make_request(base_url, endpoint, parameters, headers):
-    response = requests.get(f'{base_url}{endpoint}{parameters}', headers=headers)
-    return response.json().get('response', {})
-
-def get_fixtures(date_init, to):
-    # Assuming you want to filter fixtures based on the date range
+def get_fixtures(start_date, end_date):
     fixtures = database.select_documents_by_where(
         collection_name='fixtures',
         conditions=[
-            ("fixture.date", ">=", date_init),
-            ("fixture.date", "<=", to)
-        ]
+            ("fixture.date", ">=", start_date),
+            ("fixture.date", "<=", end_date)
+        ],
+        order_by= ("fixture.date", "ASCENDING"),
+        limit=FIXTURES_LIMIT
     )
     return fixtures
 
-def extract_info(fixtures_predictions):
+def prediction_extract_info(fixtures_predictions):
     final_fixture_predictions = []
     for fixture_prediction in fixtures_predictions:
-        predictions_info = fixture_prediction[0]['predictions']
-        league_info = fixture_prediction[0]['league']
-        teams_info = fixture_prediction[0]['teams']
-        comparison_info = fixture_prediction[0]['comparison']
+        try:
+            fixture = fixture_prediction[0]
+        except Exception as e:
+            subject='Predictions Daily Update'
+            message = f"""{e}
+
+            {fixtures_predictions}
+
+            {fixture_prediciton}"""
+            send_email(subject=subject, message=message)
+
+        predictions_info = fixture['predictions']
+        teams_info = fixture['teams']
+        comparison_info = fixture['comparison']
 
         # Create a new data structure with only essential details
         final_fixture_predictions.append({
@@ -49,26 +48,7 @@ def extract_info(fixtures_predictions):
                 'advice': predictions_info['advice'],
                 'percent': predictions_info['percent']
             },
-            'league': {
-                'id': league_info['id'],
-                'name': league_info['name'],
-                'country': league_info['country'],
-                'logo': league_info['logo'],
-                'flag': league_info['flag'],
-                'season': league_info['season']
-            },
-            'teams': {
-                'home': {
-                    'id': teams_info['home']['id'],
-                    'name': teams_info['home']['name'],
-                    'logo': teams_info['home']['logo']
-                },
-                'away': {
-                    'id': teams_info['away']['id'],
-                    'name': teams_info['away']['name'],
-                    'logo': teams_info['away']['logo']
-                }
-            },
+            'teams': teams_info,
             'comparison': {
                 'form': comparison_info['form'],
                 'att': comparison_info['att'],
@@ -80,38 +60,193 @@ def extract_info(fixtures_predictions):
             }
         })
     return final_fixture_predictions
-    
+
+def odds_extract_info(fixtures_odds):
+    final_fixture_odds = []
+    for fixture_odds in fixtures_odds:
+        try:
+            fixture = fixture_odds[0]
+        except Exception as e:
+            subject='Predictions Daily Update'
+            message = f"""{e}
+
+            {fixtures_odds}
+
+            {fixture_odds}"""
+            send_email(subject=subject, message=message)
+
+        bets = fixture['bookmakers'][0]['bets']
+        update = fixture['update']
+
+        # Create a new data structure with only essential details
+        final_fixture_odds.append({
+            'odds': bets[:2],
+            'update': update,
+            'bookmaker': fixture['bookmakers'][0]['name']
+        })
+    return final_fixture_odds
+
+def clean_fixture_data(fixture):
+
+    # Move 'goals' into 'teams'
+    fixture['teams']['home']['goals'] = fixture['fixture'].get('goals', {}).get('home', None)
+    fixture['teams']['away']['goals'] = fixture['fixture'].get('goals', {}).get('away', None)
+
+    # Remove unnecessary information
+    del fixture['goals']
+    del fixture['score']
+    del fixture['fixture']['status']
+    del fixture['fixture']['periods']
+    del fixture['league']['country']
+    del fixture['league']['round']
+    del fixture['league']['flag']
+    del fixture['fixture']['venue']
+    del fixture['fixture']['timestamp']
+
+    return fixture
+
+def process_predictions(fixture):
+
+    home_team = fixture['fixture']['teams']['home']['name']
+    away_team = fixture['fixture']['teams']['away']['name']
+
+    # Initialize result as unknown
+    fixture['prediction']['predictions']['result'] = 'X'
+
+    if fixture['prediction']['predictions']['winner']['name'] == home_team:
+        fixture['prediction']['predictions']['winner']['venue'] = 'home'
+        fixture['prediction']['predictions']['result'] = '1'
+    elif fixture['prediction']['predictions']['winner']['name'] == away_team:
+        fixture['prediction']['predictions']['winner']['venue'] = 'away'
+        fixture['prediction']['predictions']['result'] = '2'
+
+    if fixture['prediction']['predictions']['win_or_draw'] and fixture['prediction']['predictions']['winner']['venue'] == 'home':
+        fixture['prediction']['predictions']['result'] = '1X'
+    elif fixture['prediction']['predictions']['win_or_draw'] and fixture['prediction']['predictions']['winner']['venue'] == 'away':
+        fixture['prediction']['predictions']['result'] = 'X2'
+
+    # Use str.contains() on Pandas Series, not on the string
+    if '-' in fixture['prediction']['predictions']['goals']['home'] and '-' in fixture['prediction']['predictions']['goals']['away']:
+        total_goals = float(fixture['prediction']['predictions']['goals']['home'].replace('-','')) + float(fixture['prediction']['predictions']['goals']['away'].replace('-',''))
+        if total_goals >= 3:
+            fixture['prediction']['predictions']['goals_result'] = 'Under 3.5'
+        else:
+            fixture['prediction']['predictions']['goals_result'] = 'Under 2.5'
+    elif '+' in fixture['prediction']['predictions']['goals']['home'] and '+' in fixture['prediction']['predictions']['goals']['away']:
+        total_goals = float(fixture['prediction']['predictions']['goals']['home'].replace('+','')) + float(fixture['prediction']['predictions']['goals']['away'].replace('+',''))
+        if total_goals > 2.5:
+            fixture['prediction']['predictions']['goals_result'] = 'Over 2.5'
+        else:
+            fixture['prediction']['predictions']['goals_result'] = 'Over 1.5'
+    else:
+        fixture['prediction']['predictions']['goals_result'] = 'unknown'
+
+    return fixture
+
+def check_last_predictions():
+    yesterday = today - timedelta(days=1)
+
+    # Get yesterday's predictions
+    yesterday_predictions, yesterday_predictions_documents_id = database.select_documents_by_where('predictions', [
+        ('fixture.fixture.date', '>=', yesterday.strftime("%Y-%m-%dT")),
+        ('fixture.fixture.date', '<', today.strftime("%Y-%m-%dT"))], receive_ids=True)
+
+    for fixture, document_id in zip(yesterday_predictions, yesterday_predictions_documents_id):
+        prediction = fixture['prediction']
+        fixture = fixture['fixture']
+        fixture_result = 'draw' if not fixture['teams']['home']['winner'] and not fixture['teams']['away']['winner'] else \
+            'away' if fixture['teams']['away']['winner'] else 'home'
+
+        predicted_winner = prediction['predictions']['winner']['venue']
+        win_or_draw = prediction['predictions']['win_or_draw']
+
+        update_data = {'result': None, 'update': today.strftime("%Y-%m-%dT%H:%M:%S+00:00")}
+
+        if fixture_result == 'draw':
+            if not win_or_draw:
+                update_data['result'] = False
+        else:
+            if fixture_result == predicted_winner:
+                update_data['result'] = True
+
+            # Update the 'result' field in the predictions collection
+        database.update_document('predictions', document_id, update_data)
+    return len(yesterday_predictions)
+
 today = datetime.today()
-date_init = today.strftime("%Y-%m-%dT%H:%M:%S+00:00")
-to = (today + pd.DateOffset(days=25)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
-fixtures = get_fixtures(date_init, to)
+start_date = (today - timedelta(days=1)).strftime("%Y-%m-%dT")
+end_date = (today + pd.DateOffset(days=25)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+next_fixtures = get_fixtures(start_date, end_date)
 
 # Sort fixtures based on the 'date' field
-fixtures_sorted = sorted(fixtures, key=lambda x: datetime.fromisoformat(x['fixture']['date']))
+next_fixtures = sorted(next_fixtures, key=lambda x: datetime.fromisoformat(x['fixture']['date']))
 
-# Select the next 25 fixtures
-next_25_fixtures = fixtures_sorted[:10]
+# Clean and treat next_fixtures
+cleaned_next_fixtures = [clean_fixture_data(fixture) for fixture in next_fixtures]
+
 fixtures_predictions = []
-# Example: Print the dates of the next 25 fixtures
-for fixture in next_25_fixtures:
-    #print(fixture['fixture']['date'])
-    fixtures_predictions.append(make_request(base_url, 'predictions', f'?fixture={fixture['fixture']['id']}', headers))
-    time.sleep(1)
+fixtures_odds = []
+for fixture in next_fixtures:
+    fixtures_predictions.append(make_request(base_url, 'predictions', f"?fixture={fixture['fixture']['id']}", headers))
+    fixtures_odds.append(make_request(base_url, 'odds', f"?fixture={fixture['fixture']['id']}&bookmaker=8&timezone=America/Sao_Paulo", headers))
+    time.sleep(12)
 
-fixtures_predictions = extract_info(fixtures_predictions)
+fixtures_predictions = prediction_extract_info(fixtures_predictions)
+fixtures_odds = odds_extract_info(fixtures_odds)
 
-today = today.strftime('%Y_%m_%d')
+merged_data = []
 
-# Exporting the predictions
-json_data = json.dumps(fixtures_predictions, indent=2, ensure_ascii=False)
-json_file_path_predictions = f'fixtures_predictions_{today}.json'
-with open(json_file_path_predictions, 'w') as json_file:
-    json_file.write(json_data)
-print(f"Predictions exported - {json_file_path_predictions}")
+for fixture, prediction, odd in zip(cleaned_next_fixtures, fixtures_predictions, fixtures_odds):
+    merged_data.append({
+        'fixture': fixture,
+        'prediction': prediction,
+        'odds': odd,
+        'result': None,
+        'update': None
+    })
 
-# Exporting the fixtures
-json_data_fixtures = json.dumps(next_25_fixtures, indent=2, ensure_ascii=False)
-json_file_path_fixtures = f'fixtures_{today}.json'
-with open(json_file_path_fixtures, 'w') as json_file:
-    json_file.write(json_data_fixtures)
-print(f"Fixtures exported - {json_file_path_fixtures}")
+merged_data = [process_predictions(fixture) for fixture in merged_data]
+
+today_str = today.strftime('%Y_%m_%d')
+
+json_file_path = f'files/fixtures_{today_str}.json'
+with open(json_file_path, 'w', encoding='utf-8') as json_file:
+    json.dump(merged_data, json_file, ensure_ascii=False)
+print("Fixtures exported")
+
+def fix_empty_keys(data):
+    if isinstance(data, list):
+        return [fix_empty_keys(item) for item in data]
+    elif isinstance(data, dict):
+        for key, value in list(data.items()):
+            if key == '':
+                data['empty_key'] = data.pop(key)
+            if isinstance(value, (list, dict)):
+                fix_empty_keys(value)
+    return data
+
+merged_data_fixed = fix_empty_keys(merged_data)
+
+collection_name = 'predictions'
+deleted_documents = database.delete_documents_by_where(collection_name, [('fixture.fixture.date', '>=', (today - timedelta(days=1)).strftime("%Y-%m-%dT"))])
+document_ids = database.create_documents(collection_name, merged_data_fixed)
+predictions_updated = check_last_predictions()
+
+if len(document_ids):
+    subject='Predictions Daily Update'
+    message = f"""{len(document_ids)} new predictions were uploaded.
+
+    There weren't matches yesterday to update fixtures with the result if our prediction was right or wrong"""
+    if predictions_updated:
+        message = f'{len(document_ids)} new predictions were uploaded and {predictions_updated} were updated to check if the prediction was right or wrong.'
+    send_email(subject=subject, message=message)
+
+elif predictions_updated:
+    subject='Predictions Daily Update'
+    message = f"""{predictions_updated} fixtures were updated with the information if the prediction was right or wrong.
+    No future fixtures predictions were updated."""
+    send_email(subject=subject, message=message)
+else:
+    subject='Predictions Daily Update'
+    message = 'No fixtures were updated in predictions table, check the predictions script'
+    send_email(subject=subject, message=message)

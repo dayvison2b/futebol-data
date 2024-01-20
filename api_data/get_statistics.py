@@ -1,11 +1,10 @@
-import database
+import utils.database as database
 from datetime import datetime
 import json
 import time
 from api_data_request import *
 
 def get_fixtures(date_init):
-    # Assuming you want to filter fixtures based on the date range
     fixtures = database.select_documents_by_where(
         collection_name='fixtures',
         conditions=[

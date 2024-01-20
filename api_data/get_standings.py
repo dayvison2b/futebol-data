@@ -1,4 +1,4 @@
-import database
+import utils.database as database
 from api_data_request import *
 
 def flatten_data(data, league_id):

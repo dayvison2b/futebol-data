@@ -2,7 +2,7 @@ import requests
 
 base_url = "https://v3.football.api-sports.io/"
 
-with open('../settings/api_key.txt', 'r') as api_key_file:
+with open('settings/api_key.txt', 'r') as api_key_file:
     api_key = api_key_file.read()
 
 headers = {
