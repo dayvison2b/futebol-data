@@ -1,5 +1,5 @@
 import pandas as pd
-import utils.database as database
+import utils.firestore_handler as firestore_handler
 from utils.email_sender import send_email
 from datetime import datetime, timedelta
 import json
@@ -9,7 +9,7 @@ from api_data.api_data_request import *
 FIXTURES_LIMIT = 10
 
 def get_fixtures(start_date, end_date):
-    fixtures = database.select_documents_by_where(
+    fixtures = firestore_handler.select_documents(
         collection_name='fixtures',
         conditions=[
             ("fixture.date", ">=", start_date),
@@ -31,7 +31,7 @@ def prediction_extract_info(fixtures_predictions):
 
             {fixtures_predictions}
 
-            {fixture_prediciton}"""
+            {fixture_prediction}"""
             send_email(subject=subject, message=message)
 
         predictions_info = fixture['predictions']
@@ -147,7 +147,7 @@ def check_last_predictions():
     yesterday = today - timedelta(days=1)
 
     # Get yesterday's predictions
-    yesterday_predictions, yesterday_predictions_documents_id = database.select_documents_by_where('predictions', [
+    yesterday_predictions, yesterday_predictions_documents_id = firestore_handler.select_documents('predictions', [
         ('fixture.fixture.date', '>=', yesterday.strftime("%Y-%m-%dT")),
         ('fixture.fixture.date', '<', today.strftime("%Y-%m-%dT"))], receive_ids=True)
 
@@ -170,11 +170,11 @@ def check_last_predictions():
                 update_data['result'] = True
 
             # Update the 'result' field in the predictions collection
-        database.update_document('predictions', document_id, update_data)
+        firestore_handler.update_document('predictions', document_id, update_data)
     return len(yesterday_predictions)
 
 today = datetime.today()
-start_date = (today - timedelta(days=1)).strftime("%Y-%m-%dT")
+start_date = today.strftime("%Y-%m-%dT")
 end_date = (today + pd.DateOffset(days=25)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
 next_fixtures = get_fixtures(start_date, end_date)
 
@@ -228,8 +228,8 @@ def fix_empty_keys(data):
 merged_data_fixed = fix_empty_keys(merged_data)
 
 collection_name = 'predictions'
-deleted_documents = database.delete_documents_by_where(collection_name, [('fixture.fixture.date', '>=', (today - timedelta(days=1)).strftime("%Y-%m-%dT"))])
-document_ids = database.create_documents(collection_name, merged_data_fixed)
+deleted_documents = firestore_handler.delete_documents_by_where(collection_name, [('fixture.fixture.date', '>=', (today - timedelta(days=1)).strftime("%Y-%m-%dT"))])
+document_ids = firestore_handler.create_documents(collection_name, merged_data_fixed)
 predictions_updated = check_last_predictions()
 
 if len(document_ids):

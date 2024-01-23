@@ -1,4 +1,4 @@
-import utils.database as database
+import utils.firestore_handler as firestore_handler
 from api_data_request import *
 
 def flatten_data(data, league_id):
@@ -34,4 +34,4 @@ for i in range(1, 7):
     standing_data = make_request(base_url, 'standings', f'?&season=2023&league=7{i}', headers)
     flattened_standings = flatten_data(standing_data, i)
     collection_name = 'standings'
-    document_ids = database.create_documents(collection_name, flattened_standings)
+    document_ids = firestore_handler.create_documents(collection_name, flattened_standings)

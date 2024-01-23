@@ -7,7 +7,8 @@ cleaner.py
 *test*
 # Ignorar todos os arquivos .csv
 *.csv
-
+*.xlsx
+*.json
 *.joblib
 *model.py*
 model.py

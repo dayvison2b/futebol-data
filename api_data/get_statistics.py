@@ -1,11 +1,11 @@
-import utils.database as database
+import utils.firestore_handler as firestore_handler
 from datetime import datetime
 import json
 import time
 from api_data_request import *
 
 def get_fixtures(date_init):
-    fixtures = database.select_documents_by_where(
+    fixtures = firestore_handler.select_documents(
         collection_name='fixtures',
         conditions=[
             ("fixture.date", "<=", date_init)

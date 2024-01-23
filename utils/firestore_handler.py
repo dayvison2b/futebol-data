@@ -19,29 +19,23 @@ def create_documents(collection_name, documents_data):
             _, document_id = collection_ref.add(document_data)
             document_ids.append(document_id)
         except Exception as e:
-            # Handle the exception (you might want to log it or take appropriate action)
             print(f"Error creating document: {e}")
 
     # Return the list of document IDs
     return document_ids
 
-def select_documents(collection_name):
+def select_documents(collection_name, conditions=None, order_by=None, limit=None, receive_ids=False):
     collection_ref = db.collection(collection_name)
     
-    docs = collection_ref.stream()
-    
-    documents_list = [doc.to_dict() for doc in docs]
-    return documents_list
-
-def select_documents_by_where(collection_name, conditions, order_by=None, limit=None, receive_ids=False):
-    collection_ref = db.collection(collection_name)
+    query = collection_ref
 
     # Create a query with the initial condition
-    query = collection_ref.where(*conditions[0])
-
-    # Add additional conditions to the query
-    for condition in conditions[1:]:
-        query = query.where(*condition)
+    if conditions:
+        query = collection_ref.where(*conditions[0])
+        
+        # Add additional conditions to the query
+        for condition in conditions[1:]:
+            query = query.where(*condition)
 
     if order_by is not None:
         query = query.order_by(order_by[0], direction=order_by[1])
@@ -49,7 +43,6 @@ def select_documents_by_where(collection_name, conditions, order_by=None, limit=
     if limit is not None:
         query = query.limit(limit)
 
-    # Execute the query and retrieve documents
     docs = query.stream()
 
     documents_list = []
@@ -102,8 +95,6 @@ def delete_documents_by_where(collection_name, conditions):
         except Exception as e:
             raise Exception(f"Error deleting document with ID {doc.id}: {e}")
     return True
-
-
 
 def update_document(collection_name, document_id, update_data):
     collection_ref = db.collection(collection_name).document(document_id)
