@@ -106,40 +106,65 @@ def clean_fixture_data(fixture):
     return fixture
 
 def process_predictions(fixture):
+    try:
+        prediction_available = True
+        home_team = fixture['fixture']['teams']['home']['name']
+        away_team = fixture['fixture']['teams']['away']['name']
 
-    home_team = fixture['fixture']['teams']['home']['name']
-    away_team = fixture['fixture']['teams']['away']['name']
+        # Initialize result as unknown
+        fixture['prediction']['predictions']['result'] = 'X'
 
-    # Initialize result as unknown
-    fixture['prediction']['predictions']['result'] = 'X'
-
-    if fixture['prediction']['predictions']['winner']['name'] == home_team:
-        fixture['prediction']['predictions']['winner']['venue'] = 'home'
-        fixture['prediction']['predictions']['result'] = '1'
-    elif fixture['prediction']['predictions']['winner']['name'] == away_team:
-        fixture['prediction']['predictions']['winner']['venue'] = 'away'
-        fixture['prediction']['predictions']['result'] = '2'
-
-    if fixture['prediction']['predictions']['win_or_draw'] and fixture['prediction']['predictions']['winner']['venue'] == 'home':
-        fixture['prediction']['predictions']['result'] = '1X'
-    elif fixture['prediction']['predictions']['win_or_draw'] and fixture['prediction']['predictions']['winner']['venue'] == 'away':
-        fixture['prediction']['predictions']['result'] = 'X2'
-
-    # Use str.contains() on Pandas Series, not on the string
-    if '-' in fixture['prediction']['predictions']['goals']['home'] and '-' in fixture['prediction']['predictions']['goals']['away']:
-        total_goals = float(fixture['prediction']['predictions']['goals']['home'].replace('-','')) + float(fixture['prediction']['predictions']['goals']['away'].replace('-',''))
-        if total_goals >= 3:
-            fixture['prediction']['predictions']['goals_result'] = 'Under 3.5'
+        winner_name = fixture['prediction']['predictions']['winner']['name']
+        if winner_name == home_team:
+            fixture['prediction']['predictions']['winner']['venue'] = 'home'
+            fixture['prediction']['predictions']['result'] = '1'
+        elif winner_name == away_team:
+            fixture['prediction']['predictions']['winner']['venue'] = 'away'
+            fixture['prediction']['predictions']['result'] = '2'
         else:
-            fixture['prediction']['predictions']['goals_result'] = 'Under 2.5'
-    elif '+' in fixture['prediction']['predictions']['goals']['home'] and '+' in fixture['prediction']['predictions']['goals']['away']:
-        total_goals = float(fixture['prediction']['predictions']['goals']['home'].replace('+','')) + float(fixture['prediction']['predictions']['goals']['away'].replace('+',''))
-        if total_goals > 2.5:
-            fixture['prediction']['predictions']['goals_result'] = 'Over 2.5'
+            prediction_available = False
+            fixture['prediction']['predictions']['winner']['venue'] = None
+            fixture['prediction']['predictions']['result'] = None
+
+        win_or_draw = fixture['prediction']['predictions']['win_or_draw']
+        winner_venue = fixture['prediction']['predictions']['winner']['venue']
+        if win_or_draw and winner_venue == 'home':
+            fixture['prediction']['predictions']['result'] = '1X'
+        elif win_or_draw and winner_venue == 'away':
+            fixture['prediction']['predictions']['result'] = 'X2'
         else:
-            fixture['prediction']['predictions']['goals_result'] = 'Over 1.5'
-    else:
-        fixture['prediction']['predictions']['goals_result'] = 'unknown'
+            fixture['prediction']['predictions']['result'] = None
+
+        goals_home = fixture['prediction']['predictions']['goals']['home']
+        goals_away = fixture['prediction']['predictions']['goals']['away']
+
+        if prediction_available:
+            if '-' in goals_home and '-' in goals_away:
+                total_goals_home = float(goals_home.replace('-', '')) if goals_home else 0
+                total_goals_away = float(goals_away.replace('-', '')) if goals_away else 0
+                total_goals = total_goals_home + total_goals_away
+                if total_goals >= 3:
+                    fixture['prediction']['predictions']['goals_result'] = 'Under 3.5'
+                else:
+                    fixture['prediction']['predictions']['goals_result'] = 'Under 2.5'
+            elif '+' in goals_home and '+' in goals_away:
+                total_goals_home = float(goals_home.replace('+', '')) if goals_home else 0
+                total_goals_away = float(goals_away.replace('+', '')) if goals_away else 0
+                total_goals = total_goals_home + total_goals_away
+                if total_goals > 2.5:
+                    fixture['prediction']['predictions']['goals_result'] = 'Over 2.5'
+                else:
+                    fixture['prediction']['predictions']['goals_result'] = 'Over 1.5'
+            else:
+                fixture['prediction']['predictions']['goals_result'] = 'unknown'
+        else:
+            fixture['prediction']['predictions']['goals_result'] = 'unknown'
+
+    except Exception as e:
+        fixture_id = fixture['fixture']['fixture']['id']
+        fixture_date = fixture['fixture']['fixture']['date']
+        error_message = f"Error processing fixture {fixture_id} on {fixture_date}: {e}"
+        raise Exception(error_message)
 
     return fixture
 
@@ -176,7 +201,7 @@ def check_last_predictions():
 today = datetime.today()
 start_date = today.strftime("%Y-%m-%dT")
 end_date = (today + pd.DateOffset(days=25)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
-next_fixtures = get_fixtures(start_date, end_date)
+next_fixtures = get_fixtures((today - timedelta(days=1)).strftime("%Y-%m-%dT"), end_date)
 
 # Sort fixtures based on the 'date' field
 next_fixtures = sorted(next_fixtures, key=lambda x: datetime.fromisoformat(x['fixture']['date']))
@@ -189,7 +214,7 @@ fixtures_odds = []
 for fixture in next_fixtures:
     fixtures_predictions.append(make_request(base_url, 'predictions', f"?fixture={fixture['fixture']['id']}", headers))
     fixtures_odds.append(make_request(base_url, 'odds', f"?fixture={fixture['fixture']['id']}&bookmaker=8&timezone=America/Sao_Paulo", headers))
-    time.sleep(12)
+    #time.sleep(1)
 
 fixtures_predictions = prediction_extract_info(fixtures_predictions)
 fixtures_odds = odds_extract_info(fixtures_odds)
@@ -233,20 +258,22 @@ document_ids = firestore_handler.create_documents(collection_name, merged_data_f
 predictions_updated = check_last_predictions()
 
 if len(document_ids):
-    subject='Predictions Daily Update'
-    message = f"""{len(document_ids)} new predictions were uploaded.
+    subject = 'Predictions Daily Update'
+    message = f"{len(document_ids)} new predictions have been uploaded."
 
-    There weren't matches yesterday to update fixtures with the result if our prediction was right or wrong"""
-    if predictions_updated:
-        message = f'{len(document_ids)} new predictions were uploaded and {predictions_updated} were updated to check if the prediction was right or wrong.'
+    if not predictions_updated:
+        message += "\nThere were no matches yesterday, so there are no fixtures to update with the results and check if our predictions were correct or incorrect."
+    else:
+        message += f"\n{predictions_updated} fixtures were updated with information indicating whether the predictions were correct or incorrect."
     send_email(subject=subject, message=message)
 
 elif predictions_updated:
-    subject='Predictions Daily Update'
-    message = f"""{predictions_updated} fixtures were updated with the information if the prediction was right or wrong.
-    No future fixtures predictions were updated."""
+    subject = 'Predictions Daily Update'
+    message = f"{predictions_updated} fixtures were updated with information indicating whether the predictions were correct or incorrect."
+    message += "\nNo future fixture predictions were updated."
     send_email(subject=subject, message=message)
+
 else:
-    subject='Predictions Daily Update'
-    message = 'No fixtures were updated in predictions table, check the predictions script'
+    subject = 'Predictions Daily Update'
+    message = 'No new predictions were uploaded, and there are no past fixtures to determine the accuracy of our predictions. This may be due to an error. Please check the predict.py script.'
     send_email(subject=subject, message=message)
