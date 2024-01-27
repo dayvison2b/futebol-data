@@ -58,7 +58,7 @@ def get_fixtures_and_update(collection_name, leagues, date=None):
 yesterday = datetime.today() - timedelta(days=1)
 important_leagues = [39, 78, 140, 135, 88, 203, 71]
 collection_name = 'fixtures'
-daily_update = True
+daily_update = False
 
 if not daily_update:
     for league_id in important_leagues:

@@ -132,8 +132,6 @@ def process_predictions(fixture):
             fixture['prediction']['predictions']['result'] = '1X'
         elif win_or_draw and winner_venue == 'away':
             fixture['prediction']['predictions']['result'] = 'X2'
-        else:
-            fixture['prediction']['predictions']['result'] = None
 
         goals_home = fixture['prediction']['predictions']['goals']['home']
         goals_away = fixture['prediction']['predictions']['goals']['away']

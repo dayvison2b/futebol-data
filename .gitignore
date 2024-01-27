@@ -3,9 +3,8 @@ settings
 __pycache__/
 bot.py
 cleaner.py
-# Ignorar arquivos que contenham "teste" no nome
 *test*
-# Ignorar todos os arquivos .csv
+*bkp*
 *.csv
 *.xlsx
 *.json
