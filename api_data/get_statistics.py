@@ -48,7 +48,7 @@ def get_fixtures(date_init):
         collection_name='fixtures',
         conditions=[("fixture.date", "<=", date_init)
         ]
-        ,limit=100
+        #,limit=100
     )
     return fixtures
 

@@ -1,14 +1,17 @@
+import csv
 import pandas as pd
 import utils.firestore_handler as firestore_handler
 from utils.email_sender import send_email
 from datetime import datetime, timedelta
 import json
 import time
+import asyncio
+import httpx
 from api_data.api_data_request import *
 
-FIXTURES_LIMIT = 10
+FIXTURES_LIMIT = None
 
-def get_fixtures(start_date, end_date):
+async def get_fixtures(start_date, end_date):
     fixtures = firestore_handler.select_documents(
         collection_name='fixtures',
         conditions=[
@@ -20,19 +23,18 @@ def get_fixtures(start_date, end_date):
     )
     return fixtures
 
-def prediction_extract_info(fixtures_predictions):
+async def prediction_extract_info(fixtures_predictions):
     final_fixture_predictions = []
     for fixture_prediction in fixtures_predictions:
         try:
             fixture = fixture_prediction[0]
         except Exception as e:
+            continue       
             subject='Predictions Daily Update'
             message = f"""{e}
-
             {fixtures_predictions}
-
             {fixture_prediction}"""
-            send_email(subject=subject, message=message)
+            #send_email(subject=subject, message=message)
 
         predictions_info = fixture['predictions']
         teams_info = fixture['teams']
@@ -61,32 +63,33 @@ def prediction_extract_info(fixtures_predictions):
         })
     return final_fixture_predictions
 
-def odds_extract_info(fixtures_odds):
+async def odds_extract_info(fixtures_odds):
     final_fixture_odds = []
     for fixture_odds in fixtures_odds:
         try:
             fixture = fixture_odds[0]
         except Exception as e:
+            continue
             subject='Predictions Daily Update'
             message = f"""{e}
 
             {fixtures_odds}
 
             {fixture_odds}"""
-            send_email(subject=subject, message=message)
+            #send_email(subject=subject, message=message)
 
         bets = fixture['bookmakers'][0]['bets']
         update = fixture['update']
 
         # Create a new data structure with only essential details
         final_fixture_odds.append({
-            'odds': bets[:2],
+            'odds': bets[:1],
             'update': update,
             'bookmaker': fixture['bookmakers'][0]['name']
         })
     return final_fixture_odds
 
-def clean_fixture_data(fixture):
+async def clean_fixture_data(fixture):
 
     # Move 'goals' into 'teams'
     fixture['teams']['home']['goals'] = fixture['fixture'].get('goals', {}).get('home', None)
@@ -105,7 +108,7 @@ def clean_fixture_data(fixture):
 
     return fixture
 
-def process_predictions(fixture):
+async def process_predictions(fixture):
     try:
         prediction_available = True
         home_team = fixture['fixture']['teams']['home']['name']
@@ -166,16 +169,23 @@ def process_predictions(fixture):
 
     return fixture
 
-def check_last_predictions():
+async def check_last_predictions():
+    today = datetime.today()
     yesterday = today - timedelta(days=1)
 
     # Get yesterday's predictions
     yesterday_predictions, yesterday_predictions_documents_id = firestore_handler.select_documents('predictions', [
         ('fixture.fixture.date', '>=', yesterday.strftime("%Y-%m-%dT")),
         ('fixture.fixture.date', '<', today.strftime("%Y-%m-%dT"))], receive_ids=True)
-
+            
     for fixture, document_id in zip(yesterday_predictions, yesterday_predictions_documents_id):
         prediction = fixture['prediction']
+        
+        if not prediction['predictions']['result']:
+            update_data = {'result': None, 'update': today.strftime("%Y-%m-%dT%H:%M:%S+00:00")}
+            firestore_handler.update_document('predictions', document_id, update_data)
+            continue
+        
         fixture = fixture['fixture']
         fixture_result = 'draw' if not fixture['teams']['home']['winner'] and not fixture['teams']['away']['winner'] else \
             'away' if fixture['teams']['away']['winner'] else 'home'
@@ -188,90 +198,120 @@ def check_last_predictions():
         if fixture_result == 'draw':
             if not win_or_draw:
                 update_data['result'] = False
+            else:
+                update_data['result'] = True
         else:
             if fixture_result == predicted_winner:
                 update_data['result'] = True
+            else:
+                update_data['result'] = False
 
             # Update the 'result' field in the predictions collection
         firestore_handler.update_document('predictions', document_id, update_data)
     return len(yesterday_predictions)
 
-today = datetime.today()
-start_date = today.strftime("%Y-%m-%dT")
-end_date = (today + pd.DateOffset(days=25)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
-next_fixtures = get_fixtures((today - timedelta(days=1)).strftime("%Y-%m-%dT"), end_date)
+async def main():   
+    today = datetime.today()
+    start_date = today.strftime("%Y-%m-%dT")
+    end_date = (today + pd.DateOffset(days=1)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    next_fixtures = await get_fixtures((today).strftime("%Y-%m-%dT"), end_date)
 
-# Sort fixtures based on the 'date' field
-next_fixtures = sorted(next_fixtures, key=lambda x: datetime.fromisoformat(x['fixture']['date']))
+    # Sort fixtures based on the 'date' field
+    next_fixtures = sorted(next_fixtures, key=lambda x: datetime.fromisoformat(x['fixture']['date']))
 
-# Clean and treat next_fixtures
-cleaned_next_fixtures = [clean_fixture_data(fixture) for fixture in next_fixtures]
+    # Clean and treat next_fixtures
+    cleaned_next_fixtures = [await clean_fixture_data(fixture) for fixture in next_fixtures]
 
-fixtures_predictions = []
-fixtures_odds = []
-for fixture in next_fixtures:
-    fixtures_predictions.append(make_request(base_url, 'predictions', f"?fixture={fixture['fixture']['id']}", headers))
-    fixtures_odds.append(make_request(base_url, 'odds', f"?fixture={fixture['fixture']['id']}&bookmaker=8&timezone=America/Sao_Paulo", headers))
-    #time.sleep(1)
+    fixtures_predictions = []
+    fixtures_odds = []
 
-fixtures_predictions = prediction_extract_info(fixtures_predictions)
-fixtures_odds = odds_extract_info(fixtures_odds)
+    async with httpx.AsyncClient(timeout=30) as session:
+        timer = datetime.now()
+        ids_errors = []
+        req_count = 0
+        for fixture in next_fixtures:
+            fixture_prediction = await make_request_async(session, base_url, 'predictions', f"?fixture={fixture['fixture']['id']}", headers)
+            fixture_odds = await make_request_async(session, base_url, 'odds', f"?fixture={fixture['fixture']['id']}&bookmaker=8&timezone=America/Sao_Paulo", headers)
+    
+            if fixture_prediction and fixture_odds:
+                fixtures_predictions.append(fixture_prediction)
+                fixtures_odds.append(fixture_odds)
+            else:
+                ids_errors.append([fixture['fixture']['id'], 'could not get predictions/odds for this fixture'])
+            #time.sleep(1)
+            req_count+=2
+            print(req_count, 'requisições \n', 'time: ', datetime.now() - timer)
+            
+    fixtures_predictions = await prediction_extract_info(fixtures_predictions)
+    fixtures_odds = await odds_extract_info(fixtures_odds)
 
-merged_data = []
+    merged_data = []
 
-for fixture, prediction, odd in zip(cleaned_next_fixtures, fixtures_predictions, fixtures_odds):
-    merged_data.append({
-        'fixture': fixture,
-        'prediction': prediction,
-        'odds': odd,
-        'result': None,
-        'update': None
-    })
+    for fixture, prediction, odd in zip(cleaned_next_fixtures, fixtures_predictions, fixtures_odds):
+        merged_data.append({
+            'fixture': fixture,
+            'prediction': prediction,
+            'odds': odd,
+            'result': None,
+            'update': None
+        })
 
-merged_data = [process_predictions(fixture) for fixture in merged_data]
+    merged_data = [await process_predictions(fixture) for fixture in merged_data]
 
-today_str = today.strftime('%Y_%m_%d')
+    today_str = today.strftime('%Y_%m_%d')
 
-json_file_path = f'files/fixtures_{today_str}.json'
-with open(json_file_path, 'w', encoding='utf-8') as json_file:
-    json.dump(merged_data, json_file, ensure_ascii=False)
-print("Fixtures exported")
+    json_file_path = f'files/fixtures_{today_str}.json'
+    with open(json_file_path, 'w', encoding='utf-8') as json_file:
+        json.dump(merged_data, json_file, ensure_ascii=False)
+    print("Fixtures exported")
 
-def fix_empty_keys(data):
-    if isinstance(data, list):
-        return [fix_empty_keys(item) for item in data]
-    elif isinstance(data, dict):
-        for key, value in list(data.items()):
-            if key == '':
-                data['empty_key'] = data.pop(key)
-            if isinstance(value, (list, dict)):
-                fix_empty_keys(value)
-    return data
+    with open(f'ids_errors_{today_str}.csv', 'w', newline='') as csvfile:
+        fieldnames = ['Fixture ID', 'Error Message']
+        writer = csv.writer(csvfile)
+        # Escrever o cabeçalho
+        writer.writerow(fieldnames)
+        # Escrever os dados de cada erro
+        for error in ids_errors:
+            writer.writerow(error)
 
-merged_data_fixed = fix_empty_keys(merged_data)
+    async def fix_empty_keys(data):
+        if isinstance(data, list):
+            return [await fix_empty_keys(item) for item in data]
+        elif isinstance(data, dict):
+            for key, value in list(data.items()):
+                if key == '':
+                    data['empty_key'] = data.pop(key)
+                if isinstance(value, (list, dict)):
+                    await fix_empty_keys(value)
+        return data
 
-collection_name = 'predictions'
-deleted_documents = firestore_handler.delete_documents_by_where(collection_name, [('fixture.fixture.date', '>=', (today - timedelta(days=1)).strftime("%Y-%m-%dT"))])
-document_ids = firestore_handler.create_documents(collection_name, merged_data_fixed)
-predictions_updated = check_last_predictions()
+    merged_data_fixed = await fix_empty_keys(merged_data)
 
-if len(document_ids):
-    subject = 'Predictions Daily Update'
-    message = f"{len(document_ids)} new predictions have been uploaded."
+    collection_name = 'predictions'
+    deleted_documents = firestore_handler.delete_documents_by_where(collection_name, [('fixture.fixture.date', '>=', (today - timedelta(days=1)).strftime("%Y-%m-%dT"))])
+    document_ids = firestore_handler.create_documents(collection_name, merged_data_fixed)
+    predictions_updated = await check_last_predictions()
 
-    if not predictions_updated:
-        message += "\nThere were no matches yesterday, so there are no fixtures to update with the results and check if our predictions were correct or incorrect."
+    if len(document_ids):
+        subject = 'Predictions Daily Update'
+        message = f"{len(document_ids)} new predictions have been uploaded."
+
+        if not predictions_updated:
+            message += "\nThere were no matches yesterday, so there are no fixtures to update with the results and check if our predictions were correct or incorrect."
+        else:
+            message += f"\n{predictions_updated} fixtures were updated with information indicating whether the predictions were correct or incorrect."
+        #send_email(subject=subject, message=message)
+
+    elif predictions_updated:
+        subject = 'Predictions Daily Update'
+        message = f"{predictions_updated} fixtures were updated with information indicating whether the predictions were correct or incorrect."
+        message += "\nNo future fixture predictions were updated."
+        #send_email(subject=subject, message=message)
+
     else:
-        message += f"\n{predictions_updated} fixtures were updated with information indicating whether the predictions were correct or incorrect."
-    send_email(subject=subject, message=message)
-
-elif predictions_updated:
-    subject = 'Predictions Daily Update'
-    message = f"{predictions_updated} fixtures were updated with information indicating whether the predictions were correct or incorrect."
-    message += "\nNo future fixture predictions were updated."
-    send_email(subject=subject, message=message)
-
-else:
-    subject = 'Predictions Daily Update'
-    message = 'No new predictions were uploaded, and there are no past fixtures to determine the accuracy of our predictions. This may be due to an error. Please check the predict.py script.'
-    send_email(subject=subject, message=message)
+        subject = 'Predictions Daily Update'
+        message = 'No new predictions were uploaded, and there are no past fixtures to determine the accuracy of our predictions. This may be due to an error. Please check the predict.py script.'
+        #send_email(subject=subject, message=message)
+        
+if __name__ == "__main__":
+    asyncio.run(main())
